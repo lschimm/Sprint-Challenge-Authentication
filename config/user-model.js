@@ -9,7 +9,6 @@ module.exports = {
 
 async function add(user) {
   const [id] = await db("users").insert(user);
-
   return findById(id);
 }
 
@@ -24,5 +23,6 @@ function findById(id) {
 }
 
 function find() {
-  return db("users").select("id", "username", "password");
+  return db("users");
+  //   .select("id", "username", "password");
 }

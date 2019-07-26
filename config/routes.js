@@ -18,10 +18,9 @@ module.exports = server => {
 
 // implement middleware to generateToken
 
-function generateToken(user) {
-  const payload = { username: user.username };
-  const secret = process.env.JWT_SECRET;
-}
+const jwtKey =
+  process.env.JWT_SECRET ||
+  "not sure why I need this part yet but apparently I do for the jsonwebtoken. It's kinda weird but I guess that's okay. I'll figure it out soon. Anyway, the register and login portion finally work and give the correct token in the login with this part. Cool right?";
 
 function generateToken(user) {
   const payload = {
@@ -39,7 +38,6 @@ function generateToken(user) {
 
 function register(req, res) {
   // implement user registration
-
   let user = req.body;
   const hash = bcrypt.hashSync(user.password, 11);
   user.password = hash;
@@ -51,24 +49,10 @@ function register(req, res) {
     .catch(error => {
       res.status(500).json(error);
     });
-
-  // let user = req.body;
-  // const hash = bcrypt.hashSync(user.password, 11);
-  // user.password = hash;
-
-  // db.add(user)
-  //   .then(registered => {
-  //     const token = generateToken(registered);
-  //     res.status(201).json(registered);
-  //   })
-  //   .catch(error => {
-  //     res.status(500).json({ message: "could not register. :c" });
-  //   });
 }
 
 function login(req, res) {
   // implement user login
-
   let { username, password } = req.body;
 
   db.findBy({ username })
@@ -83,32 +67,12 @@ function login(req, res) {
           token
         });
       } else {
-        res.status(401).json({ message: "Invalid Credentials" });
+        res.status(401).json({ message: "incorrect logins. oops" });
       }
     })
     .catch(error => {
       res.status(500).json(error);
     });
-
-  // let { username, password } = req.body;
-
-  // db.findBy({ username })
-  //   .first()
-  //   .then(user => {
-  //     if (user && bcrypt.compareSync(password, user.password)) {
-  //       const token = generateToken(user);
-
-  //       res.status(200).json({
-  //         message: "logged in, nice",
-  //         token
-  //       });
-  //     } else {
-  //       res.status(401).json({ message: "wrong login info" });
-  //     }
-  //   })
-  //   .catch(error => {
-  //     res.status(500).json(error);
-  //   });
 }
 
 function getJokes(req, res) {
